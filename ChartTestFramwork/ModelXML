@@ -1,0 +1,59 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.Remoting.Messaging;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml.Linq;
+
+namespace ChartTestFramwork
+{
+    internal class ModelXML : IModelLocalData
+    {
+
+        private XDocument doc;
+
+        private IViewECG viewECG;
+        
+        private IModelECGDevice modelECGDevice;
+
+        private IControllerECG controllerECG;
+
+        IViewECG IModelLocalData.ViewEKG { set => viewECG = value; }
+        IModelECGDevice IModelLocalData.ModelECGDevice { set => modelECGDevice = value; }
+        IControllerECG IModelLocalData.ControllerECG { set => controllerECG = value; }
+
+
+        public ModelXML()
+        {
+            doc = new XDocument(new XElement("daten"));
+            
+        }
+
+
+        List<double> IModelLocalData.get24hData()
+        {
+            throw new NotImplementedException();
+        }
+
+        void IModelLocalData.saveLiveData(ECGValue aktuellerWert)
+        {
+			
+            String currentValue = aktuellerWert.TimeStamp.ToString();
+
+            XElement datensatzEkg = new XElement("Datensatz",
+                                        new XElement("Zeitstempel", currentValue),
+                                        new XElement("Wert", aktuellerWert.Value));
+			
+			doc.Element("daten").Add(datensatzEkg);
+            doc.Save("daten.xml");
+
+        }
+
+        void IModelLocalData.set24hData(ECGValue aktuellerWert)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}
